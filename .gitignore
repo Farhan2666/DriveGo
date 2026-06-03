@@ -1,0 +1,46 @@
+# Laravel
+/backend/vendor/
+/backend/node_modules/
+/backend/.env
+/backend/storage/framework/cache/data/
+/backend/storage/framework/sessions/
+/backend/storage/framework/views/
+/backend/storage/logs/*
+/backend/database/database.sqlite
+/backend/database/database.sqlite-wal
+/backend/database/database.sqlite-shm
+/backend/bootstrap/cache/*.php
+
+# Node / Realtime
+/realtime/node_modules/
+/realtime/.env
+
+# Admin React
+/admin/node_modules/
+/admin/dist/
+
+# Flutter Mobile
+/mobile/.dart_tool/
+/mobile/.packages
+/mobile/.flutter-plugins
+/mobile/.flutter-plugins-dependencies
+/mobile/build/
+/mobile/.pub-cache/
+/mobile/ios/Pods/
+/mobile/android/.gradle/
+/mobile/android/app/build/
+/mobile/android/local.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+/tmp/
