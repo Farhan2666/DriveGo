@@ -21,7 +21,7 @@ api.interceptors.response.use(
     // If network error (backend dead/missing), return mock data!
     if (!err.response) {
        console.warn('Backend is offline. Using MOCK DATA for demonstration.');
-       const path = err.config.url;
+       const path = err.config.url || '';
        
        if (path.includes('/dashboard')) {
           return Promise.resolve({ data: { data: { 
@@ -32,8 +32,23 @@ api.interceptors.response.use(
        
        if (path.includes('/login')) {
           localStorage.setItem('admin_token', 'mock_token_123');
-          return Promise.resolve({ data: { token: 'mock_token_123', user: { name: 'Admin Mock' } } });
+          return Promise.resolve({ data: { data: { token: 'mock_token_123', user: { name: 'Admin Mock' } } } });
        }
+
+       if (path.includes('/users/customers')) {
+          return Promise.resolve({ data: { data: { data: [
+              { id: 1, name: 'Budi Santoso', phone: '081234567890', is_active: true, created_at: '2026-01-01' }
+          ] } } });
+       }
+       
+       if (path.includes('/users/drivers')) {
+          return Promise.resolve({ data: { data: { data: [
+              { id: 1, name: 'Sopir Mantap', phone: '081999888777', status: 'active', is_active: true }
+          ] } } });
+       }
+
+       // Generic fallback for other routes
+       return Promise.resolve({ data: { data: { data: [] } } });
     }
 
     if (err.response?.status === 401) {
