@@ -61,7 +61,7 @@ function App() {
     return (
       <div className="flex h-screen bg-gray-50">
         <Toaster position="top-right" />
-        <aside className={` + (sidebarOpen ? 'w-64' : 'w-16') +  bg-gray-900 text-white transition-all duration-300 flex flex-col}>
+        <aside className={(sidebarOpen ? 'w-64' : 'w-16') + " bg-gray-900 text-white transition-all duration-300 flex flex-col"}>
           <div className="p-4 flex items-center gap-3 border-b border-white/10">
             <Car className="w-8 h-8 text-primary" />
             {sidebarOpen && <span className="font-bold text-lg">DriveGo Admin</span>}
@@ -127,7 +127,7 @@ function SidebarLink({ to, icon: Icon, label, collapsed }) {
   const location = useLocation();
   const isActive = location.pathname.startsWith(to);
   return (
-    <Link to={to} className={sidebar-link  + (isActive ? 'active' : '')}>
+    <Link to={to} className={"sidebar-link " + (isActive ? 'active' : '')}>
       <Icon size={20} />
       {!collapsed && <span>{label}</span>}
     </Link>
@@ -135,3 +135,5 @@ function SidebarLink({ to, icon: Icon, label, collapsed }) {
 }
 
 export default App;
+
+

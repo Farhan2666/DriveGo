@@ -10,7 +10,7 @@ function DriverDashboard() {
         <h1 className="text-2xl font-bold text-gray-900">Halo, Mitra Driver!</h1>
         <button 
           onClick={() => setIsOnline(!isOnline)}
-          className={px-4 py-2 rounded-lg font-medium text-white transition-colors  + (isOnline ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600')}
+          className={"px-4 py-2 rounded-lg font-medium text-white transition-colors " + (isOnline ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600')}
         >
           {isOnline ? 'Offline' : 'Mulai Narik (Online)'}
         </button>
@@ -58,3 +58,4 @@ function DriverDashboard() {
 }
 
 export default DriverDashboard;
+

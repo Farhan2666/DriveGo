@@ -10,7 +10,7 @@ const api = axios.create({
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('admin_token');
-  if (token) config.headers.Authorization = "Bearer \";
+  if (token) config.headers.Authorization = "Bearer " + token;
   return config;
 });
 
@@ -97,3 +97,4 @@ api.defaults.adapter = async function (config) {
 };
 
 export default api;
+
