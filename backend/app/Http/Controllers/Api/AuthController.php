@@ -96,6 +96,26 @@ class AuthController extends Controller
         ]);
     }
 
+    public function adminLogin(LoginRequest $request)
+    {
+        $user = User::where('phone', $request->phone)->where('role', 'admin')->first();
+
+        if (!$user || !Hash::check($request->password, $user->password_hash)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor telepon atau password salah',
+            ], 401);
+        }
+
+        $user->update(['last_login_at' => now()]);
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'success' => true,
+            'data' => ['user' => $user, 'token' => $token],
+        ]);
+    }
+
     public function logout()
     {
         JWTAuth::invalidate(JWTAuth::getToken());

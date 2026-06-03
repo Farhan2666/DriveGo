@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Car, Eye, EyeOff } from 'lucide-react';
-import axios from 'axios';
+import api from '../lib/api';
 import toast from 'react-hot-toast';
 
 export default function Login({ onLogin }) {
@@ -13,11 +13,11 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:8000/api/auth/login', { phone, password });
+      const res = await api.post('/auth/login', { phone, password });
       localStorage.setItem('admin_token', res.data.data.token);
       onLogin();
     } catch {
-      toast.error('Email atau password salah');
+      toast.error('Nomor telepon atau password salah');
     }
     setLoading(false);
   };

@@ -32,6 +32,9 @@ Route::post('/maps/geocode', [App\Http\Controllers\Api\MapController::class, 'ge
 Route::post('/maps/distance', [App\Http\Controllers\Api\MapController::class, 'distance']);
 Route::get('/maps/autocomplete', [App\Http\Controllers\Api\MapController::class, 'autocomplete']);
 
+// Admin login (public)
+Route::post('/admin/auth/login', [App\Http\Controllers\Api\AuthController::class, 'adminLogin']);
+
 // Payment callback (from Midtrans/Duitku)
 Route::post('/payments/callback', [App\Http\Controllers\Api\PaymentController::class, 'callback']);
 
