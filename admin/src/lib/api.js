@@ -1,5 +1,6 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { supabase } from './supabase';
 
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/admin';
 
@@ -14,41 +15,62 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-// Mock interceptor to allow UI testing without backend
+// INTERCEPTOR: Bypass Laravel and talk to Supabase directly
 api.interceptors.response.use(
   res => res,
-  err => {
-    // If network error (backend dead/missing), return mock data!
+  async err => {
     if (!err.response) {
-       console.warn('Backend is offline. Using MOCK DATA for demonstration.');
        const path = err.config.url || '';
+       console.log('Intercepting request to:', path);
        
-       if (path.includes('/dashboard')) {
-          return Promise.resolve({ data: { data: { 
-             stats: { total_customers: 120, total_drivers: 45, active_orders: 12, revenue: 5000000 },
-             monthly_revenue: { 1: 1000000, 2: 2500000, 3: 5000000 }
-          }}});
-       }
-       
-       if (path.includes('/login')) {
-          localStorage.setItem('admin_token', 'mock_token_123');
-          return Promise.resolve({ data: { data: { token: 'mock_token_123', user: { name: 'Admin Mock' } } } });
+       try {
+         if (path.includes('/dashboard')) {
+            const { count: total_customers } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'customer');
+            const { count: total_drivers } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'driver');
+            
+            return { data: { data: { 
+               stats: { 
+                 total_customers: total_customers || 0, 
+                 total_drivers: total_drivers || 0, 
+                 active_orders: 0, 
+                 revenue: 0 
+               },
+               monthly_revenue: { 1: 0, 2: 0, 3: 0 }
+            }}};
+         }
+         
+         if (path.includes('/login')) {
+            const { phone } = JSON.parse(err.config.data);
+            const { data: user, error } = await supabase.from('users').select('*').eq('phone', phone).single();
+            if (error || !user) throw new Error('Nomor telepon tidak terdaftar');
+            
+            localStorage.setItem('admin_token', 'supabase_token_' + user.id);
+            return { data: { data: { token: 'supabase_token_' + user.id, user } } };
+         }
+
+         if (path.includes('/users/customers')) {
+            const { data } = await supabase.from('users').select('*').eq('role', 'customer');
+            return { data: { data: { data: data || [] } } };
+         }
+         
+         if (path.includes('/users/drivers')) {
+            const { data } = await supabase.from('users').select('*').eq('role', 'driver');
+            return { data: { data: { data: data || [] } } };
+         }
+
+         if (path.includes('/finance/transactions')) {
+            return { data: { data: { data: [] } } };
+         }
+
+         if (path.includes('/finance/withdrawals')) {
+            return { data: { data: { data: [] } } };
+         }
+       } catch (error) {
+         toast.error(error.message || 'Gagal memuat data dari Supabase');
+         return Promise.reject(error);
        }
 
-       if (path.includes('/users/customers')) {
-          return Promise.resolve({ data: { data: { data: [
-              { id: 1, name: 'Budi Santoso', phone: '081234567890', is_active: true, created_at: '2026-01-01' }
-          ] } } });
-       }
-       
-       if (path.includes('/users/drivers')) {
-          return Promise.resolve({ data: { data: { data: [
-              { id: 1, name: 'Sopir Mantap', phone: '081999888777', status: 'active', is_active: true }
-          ] } } });
-       }
-
-       // Generic fallback for other routes
-       return Promise.resolve({ data: { data: { data: [] } } });
+       return { data: { data: { data: [] } } };
     }
 
     if (err.response?.status === 401) {
@@ -56,7 +78,7 @@ api.interceptors.response.use(
       window.location.reload();
     }
     
-    let msg = err.response?.data?.message || 'Terjadi kesalahan jaringan (Gagal menghubungi API)';
+    let msg = err.response?.data?.message || 'Terjadi kesalahan jaringan';
     toast.error(msg);
     return Promise.reject(err);
   }
