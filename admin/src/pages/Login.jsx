@@ -75,7 +75,12 @@ export default function Login({ onLogin }) {
             {loading ? 'Memuat...' : 'Masuk'}
           </button>
         </form>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Belum punya akun?{' '}
+          <Link to="/register" className="text-primary font-medium hover:underline">Daftar sekarang</Link>
+        </p>
       </div>
     </div>
   );
 }
+

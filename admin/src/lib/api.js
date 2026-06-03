@@ -45,6 +45,23 @@ api.interceptors.response.use(
             if (error || !user) throw new Error('Nomor telepon tidak terdaftar');
             
             localStorage.setItem('admin_token', 'supabase_token_' + user.id);
+            localStorage.setItem('user_role', user.role);
+            return { data: { data: { token: 'supabase_token_' + user.id, user } } };
+         }
+
+         if (path.includes('/register')) {
+            const payload = JSON.parse(err.config.data);
+            const { data: user, error } = await supabase.from('users').insert({
+              fullname: payload.fullname,
+              phone: payload.phone,
+              email: payload.email,
+              role: payload.role,
+              is_active: true
+            }).select().single();
+            if (error) throw new Error('Gagal mendaftar: ' + error.message);
+            
+            localStorage.setItem('admin_token', 'supabase_token_' + user.id);
+            localStorage.setItem('user_role', user.role);
             return { data: { data: { token: 'supabase_token_' + user.id, user } } };
          }
 
@@ -85,3 +102,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+
