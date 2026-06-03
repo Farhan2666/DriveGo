@@ -37,7 +37,7 @@ api.defaults.adapter = async function (config) {
       if (error || !user) throw new Error('Nomor telepon tidak terdaftar');
       
       // Verifikasi password asli dari database menggunakan bcrypt
-      const isValid = bcrypt.compareSync(password, user.password_hash);
+      const isValid = await bcrypt.compare(password, user.password_hash);
       if (!isValid) throw new Error('Password salah!');
       
       localStorage.setItem('admin_token', 'supabase_token_' + user.id);
@@ -97,4 +97,5 @@ api.defaults.adapter = async function (config) {
 };
 
 export default api;
+
 
